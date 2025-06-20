@@ -13,8 +13,8 @@ const ROTATION_SPEED = 0.0002 // Slower default rotation
 const POINT_SIZE = 0.0525 // Increased by 50%
 
 // Colors
-const LAND_COLOR = new THREE.Color(0x333333) // Dark gray for land
-const OCEAN_COLOR = new THREE.Color(0xcccccc) // Light gray for ocean
+const LAND_COLOR = new THREE.Color(0x424242) // Softer dark gray for land
+const OCEAN_COLOR = new THREE.Color(0xb2bec8) // Softer gray-blue for ocean
 
 // Custom shader for fixed lighting
 const fixedLightVertexShader = `
@@ -108,7 +108,7 @@ const init = () => {
 
   // Scene setup
   scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x000000)
+  scene.background = new THREE.Color(0x1a1a2e) // Rich dark blue-black background
 
   // Camera setup
   camera = new THREE.PerspectiveCamera(
@@ -245,9 +245,14 @@ onBeforeUnmount(() => {
 .globe-container {
   width: 100%;
   height: 100%;
-  background: transparent;
   margin: 0;
   padding: 0;
   position: relative;
+  background: radial-gradient(
+    circle at center,
+    var(--background-secondary) 0%,
+    var(--background-primary) 100%
+  );
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.2);
 }
 </style>
