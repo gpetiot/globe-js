@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Globe from './components/Globe.vue';
+import Globe from './components/Globe.vue'
 </script>
 
 <template>
@@ -16,7 +16,8 @@ import Globe from './components/Globe.vue';
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow: hidden;
