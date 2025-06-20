@@ -1,36 +1,46 @@
 <script setup lang="ts">
-// No component imports needed
+import Globe from './components/Globe.vue';
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-  </header>
-
-  <main>
-    <h1>Welcome to Vue</h1>
-  </main>
+  <div class="app-container">
+    <Globe />
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+<style>
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000000;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+/* Apply black background to the entire app */
+:root {
+  background: #000000;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 </style>
