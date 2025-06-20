@@ -227,14 +227,15 @@ const init = () => {
       vec2 center = gl_PointCoord - vec2(0.5);
       float dist = length(center);
       
-      // Base alpha for the point
-      float alpha = smoothstep(0.5, 0.4, dist);
+      // Hard cutoff for flat circle with very slight antialiasing
+      float alpha = 1.0 - smoothstep(0.48, 0.5, dist);
       
       // Check if this point is hovered
       bool isHovered = vSpecial > 0.0 && length(vPosition - hoveredPosition) < 0.001;
       
       // Add enhanced glow effect for special points
       if (vSpecial > 0.0) {
+        // Outer glow effect
         float glowAlpha = smoothstep(1.0, 0.2, dist) * (isHovered ? 0.8 : 0.5);
         vec3 glowColor = isHovered ? 
           vec3(1.0, 0.6, 0.6) : // Brighter, warmer glow for hovered
@@ -244,10 +245,11 @@ const init = () => {
         vec3 finalColor = isHovered ? 
           mix(vColor * 1.5, glowColor, 0.7) : // Brighter mix when hovered
           mix(vColor, glowColor, 0.5);        // Normal mix
-          
-        gl_FragColor = vec4(finalColor, alpha + glowAlpha);
+        
+        // Combine flat circle with glow
+        gl_FragColor = vec4(finalColor, alpha + (1.0 - alpha) * glowAlpha);
       } else {
-        gl_FragColor = vec4(vColor, alpha * 0.9);
+        gl_FragColor = vec4(vColor, alpha);
       }
     }
   `
