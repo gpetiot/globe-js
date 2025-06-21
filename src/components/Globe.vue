@@ -211,8 +211,6 @@ const init = () => {
       vSpecial = size > ${POINT_SIZE + 0.001} ? 1.0 : 0.0;
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
       gl_Position = projectionMatrix * mvPosition;
-      // Special points are always rendered on top
-      gl_Position.z = vSpecial > 0.0 ? -0.99 * gl_Position.w : gl_Position.z;
       gl_PointSize = size * (300.0 / -mvPosition.z);
     }
   `
@@ -261,6 +259,8 @@ const init = () => {
     vertexShader: pointVertexShader,
     fragmentShader: pointFragmentShader,
     transparent: true,
+    depthTest: true,
+    depthWrite: true,
   })
 
   points = new THREE.Points(pointsGeometry, pointsMaterial)
