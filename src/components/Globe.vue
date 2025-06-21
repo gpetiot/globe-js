@@ -41,9 +41,9 @@ const SPECIAL_LOCATIONS = {
 }
 
 // Colors
-const LAND_COLOR = new THREE.Color(0x424242) // Softer dark gray for land
-const OCEAN_COLOR = new THREE.Color(0xb2bec8) // Softer gray-blue for ocean
-const SPECIAL_COLOR = new THREE.Color(0xff4444) // Bright red for special locations
+const LAND_COLOR = new THREE.Color(0x64748b) // Brighter slate blue for land points
+const OCEAN_COLOR = new THREE.Color(0x334155) // Medium slate blue for ocean
+const SPECIAL_COLOR = new THREE.Color(0xff3d47) // Vivid red for special locations
 
 // Custom shader for fixed lighting
 const fixedLightVertexShader = `
@@ -57,31 +57,37 @@ void main() {
     gl_Position = projectionMatrix * mvPosition;
 }`
 
-const fixedLightFragmentShader = `
-uniform vec3 diffuse;
-uniform float opacity;
+const fixedLightFragmentShader = `    uniform vec3 diffuse;
+    uniform float opacity;
 
-varying vec3 vNormal;
-varying vec3 vViewPosition;
+    varying vec3 vNormal;
+    varying vec3 vViewPosition;
 
-void main() {
-    vec3 normal = normalize(vNormal);
-    
-    // Fixed light direction in world space
-    vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
-    vec3 fillLightDir = normalize(vec3(-1.0, -1.0, -1.0));
-    
-    // Calculate diffuse lighting
-    float mainDiff = max(dot(normal, lightDir), 0.0);
-    float fillDiff = max(dot(normal, fillLightDir), 0.0) * 0.4;
-    
-    // Ambient light
-    float ambient = 0.5;
-    
-    // Combine lighting
-    vec3 totalLight = vec3(ambient + mainDiff + fillDiff);
-    
-    gl_FragColor = vec4(diffuse * totalLight, opacity);
+    void main() {
+        vec3 normal = normalize(vNormal);
+        
+        // Enhanced lighting setup with stronger contrast
+        vec3 mainLightDir = normalize(vec3(1.0, 1.0, 1.0));
+        vec3 fillLightDir = normalize(vec3(-1.0, -0.5, -0.8));
+        vec3 rimLightDir = normalize(vec3(0.0, 1.0, 0.2));
+        
+        // Calculate multiple light contributions with increased intensity
+        float mainDiff = max(dot(normal, mainLightDir), 0.0) * 1.2; // Increased main light
+        float fillDiff = max(dot(normal, fillLightDir), 0.0) * 0.4; // Stronger fill light
+        float rimLight = pow(1.0 - max(dot(normal, normalize(-vViewPosition)), 0.0), 3.0) * 0.5; // Enhanced rim
+        
+        // Brighter ambient light
+        float ambient = 0.45;
+        
+        // Combine lighting with subtle color variation
+        vec3 mainColor = diffuse;
+        vec3 deepColor = mainColor * 0.8; // Slightly darker version for depth
+        vec3 totalLight = vec3(ambient + mainDiff + fillDiff + rimLight);
+        
+        // Mix between main color and deep color based on lighting
+        vec3 finalColor = mix(deepColor, mainColor, totalLight);
+        
+        gl_FragColor = vec4(finalColor, opacity);
 }`
 
 let scene: THREE.Scene
@@ -155,7 +161,7 @@ const init = () => {
 
   // Scene setup
   scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x1a1a2e) // Rich dark blue-black background
+  scene.background = new THREE.Color(0x0f1729) // Dark blue background with slight color shift for better contrast
 
   // Camera setup
   camera = new THREE.PerspectiveCamera(
@@ -231,23 +237,35 @@ const init = () => {
       // Check if this point is hovered
       bool isHovered = vSpecial > 0.0 && length(vPosition - hoveredPosition) < 0.001;
       
-      // Add enhanced glow effect for special points
+      // Enhanced glow effect for special points with modern look
       if (vSpecial > 0.0) {
-        // Outer glow effect
-        float glowAlpha = smoothstep(1.0, 0.2, dist) * (isHovered ? 0.8 : 0.5);
+        // Dynamic outer glow effect
+        float glowDist = smoothstep(1.0, 0.2, dist);
+        float pulseEffect = isHovered ? 
+          (sin(gl_FragCoord.w * 20.0) * 0.1 + 0.9) : 1.0; // Subtle pulse when hovered
+        float glowAlpha = glowDist * (isHovered ? 0.85 : 0.6) * pulseEffect;
+        
+        // Vibrant color palette for glow
         vec3 glowColor = isHovered ? 
-          vec3(1.0, 0.6, 0.6) : // Brighter, warmer glow for hovered
-          vec3(1.0, 0.3, 0.3);  // Normal glow
+          vec3(1.0, 0.8, 0.8) : // Brighter, warmer glow for hovered
+          vec3(1.0, 0.5, 0.5);  // Stronger base glow
         
-        // Increase brightness when hovered
-        vec3 finalColor = isHovered ? 
-          mix(vColor * 1.5, glowColor, 0.7) : // Brighter mix when hovered
-          mix(vColor, glowColor, 0.5);        // Normal mix
+        // Enhanced brightness with more pronounced color shift
+        vec3 baseColor = vColor * (isHovered ? 2.0 : 1.4);
+        float colorShift = isHovered ? 0.85 : 0.7;
+        vec3 finalColor = mix(baseColor, glowColor, colorShift);
         
-        // Combine flat circle with glow
+        // Add enhanced inner glow
+        float innerGlow = (1.0 - dist * dist) * 0.35;
+        finalColor += glowColor * innerGlow * (isHovered ? 1.0 : 0.5);
+        
+        // Combine everything with smooth transition
         gl_FragColor = vec4(finalColor, alpha + (1.0 - alpha) * glowAlpha);
       } else {
-        gl_FragColor = vec4(vColor, alpha);
+        // Enhanced rim lighting for better visibility of regular points
+        float rimLight = pow(1.0 - dist, 2.5) * 0.45;
+        vec3 finalColor = vColor * 1.2 + vec3(rimLight); // Increased base brightness
+        gl_FragColor = vec4(finalColor, alpha);
       }
     }
   `
@@ -476,9 +494,11 @@ onBeforeUnmount(() => {
   position: relative;
   background: radial-gradient(
     circle at center,
-    var(--background-secondary) 0%,
-    var(--background-primary) 100%
+    #334155 0%,
+    /* Tailwind slate-700 */ #1e293b 100% /* Tailwind slate-800 */
   );
-  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    inset 0 0 100px rgba(0, 0, 0, 0.25),
+    inset 0 0 200px rgba(56, 189, 248, 0.15); /* Enhanced blue glow */
 }
 </style>
