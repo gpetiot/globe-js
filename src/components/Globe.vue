@@ -72,7 +72,6 @@ let controls: OrbitControls
 
 // Globe configuration
 const GLOBE_RADIUS = 1
-const ROTATION_SPEED = 0.0002 // Slower default rotation
 const POINT_SIZE = 0.0525 // Base point size
 const SPECIAL_POINT_SIZE = 0.079 // 150% of regular point size
 const HOVER_DETECTION_RADIUS = 0.8 // Reduced from 1.2 for more precise detection
@@ -340,6 +339,8 @@ const init = () => {
   controls.rotateSpeed = 0.5
   controls.enableZoom = false
   controls.enablePan = false
+  controls.autoRotate = true
+  controls.autoRotateSpeed = 0.2
 
   // Handle window resize and mouse events
   window.addEventListener('resize', onWindowResize)
@@ -365,12 +366,7 @@ const init = () => {
 const animate = () => {
   if (!rotatingGroup) return
 
-  // Auto-rotate when not being controlled
-  if (!controls.enabled) {
-    rotatingGroup.rotation.y += ROTATION_SPEED
-  }
-
-  controls.update()
+  controls.update() // This will handle the auto-rotation
   renderer.render(scene, camera)
   frameId = requestAnimationFrame(animate)
 }
