@@ -82,11 +82,11 @@ const hoveredCity = ref<string>('')
 
 // Special city locations [longitude, latitude]
 const SPECIAL_LOCATIONS = {
-  Paris: [2.3522, 48.8566],
+  Paris: [2.7172, 48.0566],
   Grenoble: [5.7245, 45.1885],
   Manila: [120.9842, 14.5995],
   Cambridge: [0.1218, 52.2053],
-  Saclay: [2.0769, 48.7281], // Adjusted longitude to increase separation from Paris
+  Saclay: [1.3872, 47.5281],
 }
 
 // Colors
