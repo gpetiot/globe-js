@@ -7,9 +7,10 @@ import { CONTINENTAL_POINTS } from '../data/globeData'
 // Background text for each city
 const CITY_BACKGROUNDS = {
   Paris: 'Ada',
-  Grenoble: 'LLVM - Clang',
+  Grenoble: 'LLVM / Clang',
   Manila: 'Tagalog',
   Cambridge: 'OCaml',
+  Saclay: 'C / OCaml',
 }
 
 const getCityBackground = (city: string) => {
@@ -46,20 +47,23 @@ const hoveredCityInfo = computed<CityInfo | null>(() => {
 const TOOLTIP_CONTENT = {
   Paris: {
     title: 'Paris',
-    description: 'PhD thesis on Human-Computer Interaction • CBTC Systems at Siemens/Systerel',
+    description: 'Communications-Based Train Control (CBTC)',
   },
   Grenoble: {
     title: 'Grenoble',
-    description: 'Hardware fault injection research at Verimag',
-    year: '2015-2018',
+    description: 'Hardware Fault Injection and Simulation Research',
   },
   Manila: {
     title: 'Manila',
-    description: 'Creator of TryTagalog.com',
+    description: 'E-Learning Platform',
   },
   Cambridge: {
     title: 'Cambridge',
-    description: 'OCaml development at Tarides',
+    description: 'Developer Tools',
+  },
+  Saclay: {
+    title: 'Saclay',
+    description: 'Software Verification Reasearch',
   },
 }
 
@@ -71,7 +75,7 @@ const GLOBE_RADIUS = 1
 const ROTATION_SPEED = 0.0002 // Slower default rotation
 const POINT_SIZE = 0.0525 // Base point size
 const SPECIAL_POINT_SIZE = 0.079 // 150% of regular point size
-const HOVER_DETECTION_RADIUS = 1.2 // Only 20% increase for more precise detection
+const HOVER_DETECTION_RADIUS = 0.8 // Reduced from 1.2 for more precise detection
 
 // Track the currently hovered city
 const hoveredCity = ref<string>('')
@@ -82,6 +86,7 @@ const SPECIAL_LOCATIONS = {
   Grenoble: [5.7245, 45.1885],
   Manila: [120.9842, 14.5995],
   Cambridge: [0.1218, 52.2053],
+  Saclay: [2.0769, 48.7281], // Adjusted longitude to increase separation from Paris
 }
 
 // Colors
