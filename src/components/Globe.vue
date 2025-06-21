@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref, computed } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { CONTINENTAL_POINTS } from '../data/globeData'
@@ -12,12 +12,44 @@ interface TooltipState {
   y: number
 }
 
+interface CityInfo {
+  title: string
+  description?: string
+  year?: string
+}
+
 const tooltip = ref<TooltipState>({
   visible: false,
   text: '',
   x: 0,
   y: 0,
 })
+
+const hoveredCityInfo = computed<CityInfo | null>(() => {
+  if (!hoveredCity.value) return null
+  return TOOLTIP_CONTENT[hoveredCity.value as keyof typeof TOOLTIP_CONTENT]
+})
+
+// Tooltip content for each city
+const TOOLTIP_CONTENT = {
+  Paris: {
+    title: 'Paris',
+    description: 'PhD thesis on Human-Computer Interaction • CBTC Systems at Siemens/Systerel',
+  },
+  Grenoble: {
+    title: 'Grenoble',
+    description: 'Hardware fault injection research at Verimag',
+    year: '2015-2018',
+  },
+  Manila: {
+    title: 'Manila',
+    description: 'Creator of TryTagalog.com',
+  },
+  Cambridge: {
+    title: 'Cambridge',
+    description: 'OCaml development at Tarides',
+  },
+}
 
 const canvasContainer = ref<HTMLDivElement | null>(null)
 let controls: OrbitControls
@@ -37,7 +69,7 @@ const SPECIAL_LOCATIONS = {
   Paris: [2.3522, 48.8566],
   Grenoble: [5.7245, 45.1885],
   Manila: [120.9842, 14.5995],
-  Salisbury: [-1.7947, 51.0689],
+  Cambridge: [0.1218, 52.2053],
 }
 
 // Colors
@@ -408,6 +440,7 @@ const checkSpecialPointHover = (event: MouseEvent) => {
         x: event.clientX + 15,
         y: event.clientY,
       }
+      hoveredCity.value = closestCity
       return
     }
   }
@@ -415,7 +448,12 @@ const checkSpecialPointHover = (event: MouseEvent) => {
   // Reset hover state when no point is hovered
   hoveredCity.value = ''
   ;(points.material as THREE.ShaderMaterial).uniforms.hoveredPosition.value.set(0, 0, 0)
-  tooltip.value.visible = false
+  tooltip.value = {
+    visible: false,
+    text: '',
+    x: 0,
+    y: 0,
+  }
 }
 
 onMounted(() => {
@@ -455,11 +493,15 @@ onBeforeUnmount(() => {
 <template>
   <div ref="canvasContainer" class="globe-container">
     <div
-      v-if="tooltip.visible"
+      v-if="tooltip.visible && hoveredCityInfo"
       class="tooltip"
       :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }"
     >
-      {{ tooltip.text }}
+      <div class="tooltip-title">{{ hoveredCityInfo.title }}</div>
+      <div v-if="hoveredCityInfo.description" class="tooltip-description">
+        {{ hoveredCityInfo.description }}
+      </div>
+      <div v-if="hoveredCityInfo.year" class="tooltip-year">{{ hoveredCityInfo.year }}</div>
     </div>
   </div>
 </template>
@@ -467,38 +509,42 @@ onBeforeUnmount(() => {
 <style scoped>
 .globe-container {
   position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at center, #334155 0%, #1e293b 100%);
+  box-shadow:
+    inset 0 0 100px rgba(0, 0, 0, 0.25),
+    inset 0 0 200px rgba(56, 189, 248, 0.15);
 }
 
 .tooltip {
   position: fixed;
   transform: translate(0, -50%);
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(15, 23, 42, 0.95);
   color: white;
-  padding: 8px 12px;
+  padding: 12px 16px;
   border-radius: 6px;
   font-size: 14px;
   pointer-events: none;
   z-index: 1000;
   white-space: nowrap;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transition: opacity 0.15s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.globe-container {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  background: radial-gradient(
-    circle at center,
-    #334155 0%,
-    /* Tailwind slate-700 */ #1e293b 100% /* Tailwind slate-800 */
-  );
-  box-shadow:
-    inset 0 0 100px rgba(0, 0, 0, 0.25),
-    inset 0 0 200px rgba(56, 189, 248, 0.15); /* Enhanced blue glow */
+.tooltip-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.tooltip-description {
+  font-size: 13px;
+  color: #e2e8f0;
+  margin-bottom: 4px;
+}
+
+.tooltip-year {
+  font-size: 12px;
+  color: #94a3b8;
 }
 </style>
