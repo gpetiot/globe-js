@@ -3,19 +3,7 @@ import { onMounted, onBeforeUnmount, ref, computed } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { CONTINENTAL_POINTS } from '../data/globeData'
-
-// Background text for each city
-const CITY_BACKGROUNDS = {
-  Paris: 'Ada',
-  Grenoble: 'LLVM / Clang',
-  Manila: 'Tagalog',
-  Cambridge: 'OCaml',
-  Saclay: 'C / OCaml',
-}
-
-const getCityBackground = (city: string) => {
-  return CITY_BACKGROUNDS[city as keyof typeof CITY_BACKGROUNDS] || ''
-}
+import { SPECIAL_LOCATIONS } from '../data/locations'
 
 // Tooltip state
 interface TooltipState {
@@ -40,32 +28,14 @@ const tooltip = ref<TooltipState>({
 
 const hoveredCityInfo = computed<CityInfo | null>(() => {
   if (!hoveredCity.value) return null
-  return TOOLTIP_CONTENT[hoveredCity.value as keyof typeof TOOLTIP_CONTENT]
+  const location = SPECIAL_LOCATIONS[hoveredCity.value]
+  return location
+    ? {
+        title: location.title,
+        description: location.description,
+      }
+    : null
 })
-
-// Tooltip content for each city
-const TOOLTIP_CONTENT = {
-  Paris: {
-    title: 'Paris',
-    description: 'Communications-Based Train Control (CBTC)',
-  },
-  Grenoble: {
-    title: 'Grenoble',
-    description: 'Hardware Fault Injection and Simulation Research',
-  },
-  Manila: {
-    title: 'Manila',
-    description: 'E-Learning Platform',
-  },
-  Cambridge: {
-    title: 'Cambridge',
-    description: 'Developer Tools',
-  },
-  Saclay: {
-    title: 'Saclay',
-    description: 'Software Verification Reasearch',
-  },
-}
 
 const canvasContainer = ref<HTMLDivElement | null>(null)
 let controls: OrbitControls
@@ -78,15 +48,6 @@ const HOVER_DETECTION_RADIUS = 0.8 // Reduced from 1.2 for more precise detectio
 
 // Track the currently hovered city
 const hoveredCity = ref<string>('')
-
-// Special city locations [longitude, latitude]
-const SPECIAL_LOCATIONS = {
-  Paris: [2.7172, 48.0566],
-  Grenoble: [5.7245, 45.1885],
-  Manila: [120.9842, 14.5995],
-  Cambridge: [0.1218, 52.2053],
-  Saclay: [1.3872, 47.5281],
-}
 
 // Colors
 const LAND_COLOR = new THREE.Color(0x64748b) // Brighter slate blue for land points
@@ -153,7 +114,8 @@ const createPointsGeometry = (): THREE.BufferGeometry => {
   const pointSizes: number[] = []
 
   // Add special locations first
-  Object.values(SPECIAL_LOCATIONS).forEach(([lng, lat]) => {
+  Object.values(SPECIAL_LOCATIONS).forEach(({ coords }) => {
+    const [lng, lat] = coords
     const phi = (90 - lat) * (Math.PI / 180)
     const theta = (lng + 180) * (Math.PI / 180)
 
@@ -363,6 +325,11 @@ const init = () => {
   })
 }
 
+// Helper functions
+const getCityBackground = (city: string) => {
+  return SPECIAL_LOCATIONS[city]?.background || ''
+}
+
 const animate = () => {
   if (!rotatingGroup) return
 
@@ -410,7 +377,8 @@ const checkSpecialPointHover = (event: MouseEvent) => {
     let minDistance = Infinity
     let closestPoint = new THREE.Vector3()
 
-    Object.entries(SPECIAL_LOCATIONS).forEach(([city, [cityLng, cityLat]]) => {
+    Object.entries(SPECIAL_LOCATIONS).forEach(([city, data]) => {
+      const [cityLng, cityLat] = data.coords
       // Convert city coordinates to 3D position
       const phi = (90 - cityLat) * (Math.PI / 180)
       const theta = (cityLng + 180) * (Math.PI / 180)
