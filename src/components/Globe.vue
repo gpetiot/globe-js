@@ -324,11 +324,6 @@ const init = () => {
   })
 }
 
-// Helper functions
-const getCityBackground = (city: string) => {
-  return SPECIAL_LOCATIONS[city]?.background || ''
-}
-
 const animate = () => {
   if (!rotatingGroup) return
 
@@ -472,25 +467,6 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="canvasContainer" class="globe-container">
-    <!-- Existing background text component -->
-    <div class="background-text" v-if="hoveredCity">
-      <div class="text-grid">
-        <div
-          v-for="i in 15"
-          :key="i"
-          class="text-row"
-          :class="{ 'slide-right': i % 2 === 0, 'slide-left': i % 2 !== 0 }"
-          :style="{ '--row-index': i }"
-        >
-          <div class="text-content">
-            <span v-for="j in 25" :key="j">{{ getCityBackground(hoveredCity) }}</span>
-          </div>
-          <div class="text-content" aria-hidden="true">
-            <span v-for="j in 25" :key="j">{{ getCityBackground(hoveredCity) }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
     <div
       v-if="tooltip.visible && hoveredCityInfo"
       class="tooltip"
@@ -546,75 +522,6 @@ onBeforeUnmount(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-/* Background text */
-.background-text {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  pointer-events: none;
-  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.text-grid {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-
-.text-row {
-  position: relative;
-  height: calc(100vh / 15);
-  display: flex;
-  align-items: center;
-  font-size: min(2.2vh, 20px);
-  color: rgba(255, 255, 255, 0.06);
-  overflow: hidden;
-  opacity: 1;
-}
-
-.text-content {
-  display: flex;
-  flex-shrink: 0;
-  gap: 4em;
-  padding: 0 2em;
-  animation: inherit;
-}
-
-.slide-left {
-  animation: slideLeft 120s linear infinite;
-}
-
-.slide-right {
-  animation: slideRight 120s linear infinite;
-}
-
-@keyframes slideLeft {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes slideRight {
-  from {
-    transform: translateX(-50%);
-  }
-  to {
-    transform: translateX(0);
-  }
 }
 
 /* Tooltip */
