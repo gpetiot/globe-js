@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { CONTINENTAL_POINTS } from '../data/globeData'
 import { SPECIAL_LOCATIONS } from '../data/locations'
+import { Airplane } from './Airplane'
 
 // Types
 interface TooltipState {
@@ -27,7 +28,6 @@ const tooltip = ref<TooltipState>({
 })
 
 const hoveredCity = ref<string>('')
-
 const hoveredCityInfo = computed<CityInfo | null>(() => {
   if (!hoveredCity.value) return null
   const location = SPECIAL_LOCATIONS[hoveredCity.value]
@@ -44,6 +44,8 @@ let controls: OrbitControls
 
 // Globe configuration
 const GLOBE_RADIUS = 1
+const PLANE_ALTITUDE = GLOBE_RADIUS * 1.15 // Plane flies 15% higher than globe radius
+const PLANE_ORBIT_SPEED = 0.5 // Rotation speed
 const POINT_SIZE = 0.0525 // Base point size
 const SPECIAL_POINT_SIZE = 0.079 // 150% of regular point size
 const HOVER_DETECTION_RADIUS = 0.8 // Reduced from 1.2 for more precise detection
@@ -98,6 +100,8 @@ const fixedLightFragmentShader = `    uniform vec3 diffuse;
         gl_FragColor = vec4(finalColor, opacity);
 }`
 
+// Scene objects
+let airplanes: Airplane[] = []
 let scene: THREE.Scene
 let rotatingGroup: THREE.Group
 let camera: THREE.PerspectiveCamera
@@ -105,7 +109,6 @@ let renderer: THREE.WebGLRenderer
 let globe: THREE.Mesh
 let points: THREE.Points
 let frameId: number
-
 const createPointsGeometry = (): THREE.BufferGeometry => {
   const geometry = new THREE.BufferGeometry()
   const pointsData: number[] = []
@@ -172,6 +175,18 @@ const init = () => {
   scene = new THREE.Scene()
   scene.background = new THREE.Color(0x0f1729) // Dark blue background with slight color shift for better contrast
 
+  // Add lights for MeshPhongMaterial
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
+  scene.add(ambientLight)
+
+  const mainLight = new THREE.DirectionalLight(0xffffff, 0.8)
+  mainLight.position.set(1, 1, 1)
+  scene.add(mainLight)
+
+  const fillLight = new THREE.DirectionalLight(0xffffff, 0.3)
+  fillLight.position.set(-1, -0.5, -0.8)
+  scene.add(fillLight)
+
   // Camera setup
   camera = new THREE.PerspectiveCamera(
     45,
@@ -210,6 +225,31 @@ const init = () => {
 
   // Create points for landmasses
   const pointsGeometry = createPointsGeometry()
+
+  // Create and add airplanes
+  // Create plane configurations
+  const planeConfigs = [
+    {
+      altitude: PLANE_ALTITUDE,
+      orbitSpeed: PLANE_ORBIT_SPEED,
+      color: 0xffffff, // White color
+      initialAngle: 0,
+    },
+    {
+      altitude: PLANE_ALTITUDE * 1.1, // 30% higher than the first plane
+      orbitSpeed: PLANE_ORBIT_SPEED * 1.2, // 20% faster to compensate for larger orbit
+      color: 0xffffff, // White color
+      initialAngle: Math.PI, // Start on opposite side
+      orbitTilt: Math.PI / 6, // 30 degree tilt
+    },
+  ]
+
+  // Create and add all planes to the scene
+  airplanes = planeConfigs.map((config) => {
+    const plane = new Airplane(config)
+    scene.add(plane.getObject())
+    return plane
+  })
 
   // Custom point material with fixed lighting
   const pointVertexShader = `
@@ -326,6 +366,9 @@ const init = () => {
 
 const animate = () => {
   if (!rotatingGroup) return
+
+  // Update all airplanes
+  airplanes.forEach((plane) => plane.update())
 
   controls.update() // This will handle the auto-rotation
   renderer.render(scene, camera)
@@ -456,6 +499,9 @@ onBeforeUnmount(() => {
     globe.geometry.dispose()
     ;(globe.material as THREE.Material).dispose()
   }
+  // Dispose all airplanes
+  airplanes.forEach((plane) => plane.dispose())
+  airplanes = []
   if (rotatingGroup) {
     scene.remove(rotatingGroup)
   }
