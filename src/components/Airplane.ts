@@ -10,8 +10,8 @@ export interface AirplaneConfig {
 
 export class Airplane {
   private group: THREE.Group
-  private plane: THREE.Group
-  private path: THREE.Line
+  private plane!: THREE.Group // Initialized in createAirplane()
+  private path!: THREE.Line // Initialized in createPath()
   private orbitAngle: number
   private config: AirplaneConfig
 
