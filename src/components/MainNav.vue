@@ -1,16 +1,8 @@
 <script setup lang="ts">
 const sections = {
-  verification: {
-    id: 'verification',
-    title: 'Software Verification',
-  },
   tagalog: {
     id: 'tagalog',
     title: 'Tagalog',
-  },
-  prolog: {
-    id: 'prolog',
-    title: 'Logic Programming',
   },
 } as const
 

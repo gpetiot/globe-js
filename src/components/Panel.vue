@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import SoftwareVerification from './panels/SoftwareVerification.vue'
 import Tagalog from './panels/Tagalog.vue'
-import LogicProgramming from './panels/LogicProgramming.vue'
 
-type SectionId = 'verification' | 'tagalog' | 'prolog' | null
+type SectionId = 'tagalog' | null
 
 interface Props {
   activeSection: SectionId
@@ -14,12 +12,8 @@ const props = defineProps<Props>()
 
 const currentComponent = computed(() => {
   switch (props.activeSection) {
-    case 'verification':
-      return SoftwareVerification
     case 'tagalog':
       return Tagalog
-    case 'prolog':
-      return LogicProgramming
     default:
       return null
   }

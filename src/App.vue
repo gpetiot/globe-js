@@ -15,7 +15,7 @@ import Panel from './components/Panel.vue'
 import IntroPanel from './components/IntroPanel.vue'
 
 // Type for section IDs
-type SectionId = 'verification' | 'tagalog' | 'prolog'
+type SectionId = 'tagalog'
 const activeSection = ref<SectionId | null>(null)
 
 // Handle section selection from nav
