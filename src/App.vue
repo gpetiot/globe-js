@@ -1,6 +1,7 @@
 <template>
   <div class="app">
     <Globe />
+    <IntroPanel />
     <MainNav :active-section="activeSection" @select="handleSectionSelect" />
     <Panel :active-section="activeSection" />
   </div>
@@ -11,6 +12,7 @@ import { ref } from 'vue'
 import Globe from './components/Globe.vue'
 import MainNav from './components/MainNav.vue'
 import Panel from './components/Panel.vue'
+import IntroPanel from './components/IntroPanel.vue'
 
 // Type for section IDs
 type SectionId = 'verification' | 'tagalog' | 'prolog'
