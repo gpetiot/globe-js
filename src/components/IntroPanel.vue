@@ -45,25 +45,10 @@
         </div>
         <div class="panel-content">
           <p class="intro-text">
-            Software engineer specializing in formal methods and functional programming.
+            Software engineer with strong experience in formal methods and functional programming. I
+            focus on building reliable and well-designed products. My interests span multiple
+            industries including transport systems, financial services, and educational technology.
           </p>
-          <div class="interests">
-            <div class="interest-item">
-              <span class="icon">🔍</span>
-              Software Verification
-              <span class="description">Research in program verification and formal methods</span>
-            </div>
-            <div class="interest-item">
-              <span class="icon">🧮</span>
-              Logic Programming
-              <span class="description">Exploring declarative programming paradigms</span>
-            </div>
-            <div class="interest-item">
-              <span class="icon">🗣️</span>
-              Tagalog
-              <span class="description">Building tools for language learning</span>
-            </div>
-          </div>
         </div>
       </div>
     </Transition>
@@ -185,46 +170,11 @@ const closePanel = () => {
 }
 
 .intro-text {
-  margin: 0 0 1.5rem;
+  margin: 0;
   color: var(--color-text);
-  line-height: 1.6;
+  line-height: 1.7;
   font-size: 0.95rem;
-}
-
-.interests {
-  display: grid;
-  gap: 1rem;
-}
-
-.interest-item {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.icon {
-  font-size: 1.25rem;
-  grid-row: span 2;
-  line-height: 1;
-}
-
-.interest-link {
-  color: var(--color-primary);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: color 0.2s ease;
-}
-
-.interest-link:hover {
-  color: #818cf8;
-}
-
-.description {
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-  grid-column: 2;
+  max-width: 65ch;
 }
 
 /* Transitions */
