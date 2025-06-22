@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { CONTINENTAL_POINTS } from '../data/globeData'
 import { SPECIAL_LOCATIONS } from '../data/locations'
 
-// Tooltip state
+// Types
 interface TooltipState {
   visible: boolean
   text: string
@@ -16,15 +16,17 @@ interface TooltipState {
 interface CityInfo {
   title: string
   description?: string
-  year?: string
 }
 
+// State
 const tooltip = ref<TooltipState>({
   visible: false,
   text: '',
   x: 0,
   y: 0,
 })
+
+const hoveredCity = ref<string>('')
 
 const hoveredCityInfo = computed<CityInfo | null>(() => {
   if (!hoveredCity.value) return null
@@ -45,9 +47,6 @@ const GLOBE_RADIUS = 1
 const POINT_SIZE = 0.0525 // Base point size
 const SPECIAL_POINT_SIZE = 0.079 // 150% of regular point size
 const HOVER_DETECTION_RADIUS = 0.8 // Reduced from 1.2 for more precise detection
-
-// Track the currently hovered city
-const hoveredCity = ref<string>('')
 
 // Colors
 const LAND_COLOR = new THREE.Color(0x64748b) // Brighter slate blue for land points
@@ -473,6 +472,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="canvasContainer" class="globe-container">
+    <!-- Existing background text component -->
     <div class="background-text" v-if="hoveredCity">
       <div class="text-grid">
         <div
@@ -500,7 +500,6 @@ onBeforeUnmount(() => {
       <div v-if="hoveredCityInfo.description" class="tooltip-description">
         {{ hoveredCityInfo.description }}
       </div>
-      <div v-if="hoveredCityInfo.year" class="tooltip-year">{{ hoveredCityInfo.year }}</div>
     </div>
   </div>
 </template>
@@ -519,11 +518,37 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
-canvas {
-  position: relative;
-  z-index: 2;
+/* Transitions */
+.slide-enter-active,
+.slide-leave-active {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
+.slide-enter-from.right,
+.slide-leave-to.right {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.slide-enter-from.left,
+.slide-leave-to.left {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Background text */
 .background-text {
   position: absolute;
   top: 0;
@@ -574,17 +599,6 @@ canvas {
   animation: slideRight 120s linear infinite;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes slideLeft {
   from {
     transform: translateX(0);
@@ -603,6 +617,7 @@ canvas {
   }
 }
 
+/* Tooltip */
 .tooltip {
   position: fixed;
   transform: translate(0, -50%);
