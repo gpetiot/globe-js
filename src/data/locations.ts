@@ -6,28 +6,33 @@ export interface CityData {
 
 export const SPECIAL_LOCATIONS: Record<string, CityData> = {
   Paris: {
-    coords: [2.7172, 48.0566],
+    coords: [2.3522, 48.8566],
     title: 'Paris',
-    description: 'Communications-Based Train Control (CBTC)',
+    description: 'Capital of France, center for art and technology.',
   },
-  Grenoble: {
-    coords: [5.7245, 45.1885],
-    title: 'Grenoble',
-    description: 'Hardware Fault Injection and Simulation Research',
+  London: {
+    coords: [-0.1276, 51.5074],
+    title: 'London',
+    description: 'Capital of the UK, global financial and tech hub.',
   },
-  Manila: {
-    coords: [120.9842, 14.5995],
-    title: 'Manila',
-    description: 'E-Learning Platform',
+  'New York': {
+    coords: [-74.006, 40.7128],
+    title: 'New York',
+    description: 'Major US city, known for finance, media, and innovation.',
   },
-  Cambridge: {
-    coords: [0.1218, 52.2053],
-    title: 'Cambridge',
-    description: 'Developer Tools',
+  Tokyo: {
+    coords: [139.6917, 35.6895],
+    title: 'Tokyo',
+    description: 'Capital of Japan, leader in technology and culture.',
   },
-  Saclay: {
-    coords: [1.3872, 47.5281],
-    title: 'Saclay',
-    description: 'Software Verification Reasearch',
+  'San Francisco': {
+    coords: [-122.4194, 37.7749],
+    title: 'San Francisco',
+    description: 'Heart of Silicon Valley and tech innovation.',
+  },
+  Beijing: {
+    coords: [116.4074, 39.9042],
+    title: 'Beijing',
+    description: 'Capital of China, center for politics and technology.',
   },
 }
