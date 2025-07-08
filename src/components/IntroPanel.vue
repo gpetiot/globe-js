@@ -52,6 +52,10 @@
           <p class="intro-text">
             Explore a 3D interactive globe. This app is built with Vue 3 and THREE.js.
           </p>
+          <p class="intro-text">
+            View the source code on
+            <a href="https://github.com/gpetiot/globe-js" target="_blank" rel="noopener">GitHub</a>.
+          </p>
         </div>
       </div>
     </Transition>
@@ -178,6 +182,17 @@ const closePanel = () => {
   line-height: 1.7;
   font-size: 0.95rem;
   max-width: 65ch;
+}
+
+a {
+  color: #60a5fa;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+a:hover,
+a:focus {
+  color: #38bdf8;
+  text-decoration: underline;
 }
 
 /* Transitions */
