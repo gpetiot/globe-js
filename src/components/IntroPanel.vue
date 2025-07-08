@@ -1,7 +1,12 @@
 <template>
   <div class="intro-container">
     <!-- Info button - always visible -->
-    <button v-show="!isOpen" class="info-button" @click="openPanel" aria-label="Show introduction">
+    <button
+      v-show="!isOpen"
+      class="info-button"
+      @click="openPanel"
+      aria-label="Show app introduction"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
@@ -24,10 +29,10 @@
         id="intro-panel"
         class="intro-panel"
         role="dialog"
-        aria-label="About Guillaume"
+        aria-label="About This App"
       >
         <div class="panel-header">
-          <h1>Hi, I'm Guillaume</h1>
+          <h1>About This Interactive Globe</h1>
           <button class="close-button" @click="closePanel" aria-label="Close introduction">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -45,9 +50,7 @@
         </div>
         <div class="panel-content">
           <p class="intro-text">
-            Software engineer with strong experience in formal methods and functional programming. I
-            focus on building reliable and well-designed products. My interests span multiple
-            industries including transport systems, financial services, and educational technology.
+            Explore a 3D interactive globe. This app is built with Vue 3 and THREE.js.
           </p>
         </div>
       </div>
