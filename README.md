@@ -1,39 +1,54 @@
-# earth
+# globe-js
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue 3 + THREE.js interactive globe application highlighting key locations.
 
-## Recommended IDE Setup
+## Getting Started
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+### Prerequisites
 
-## Type Support for `.vue` Imports in TS
+- npm (Node.js)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+### Installation
 
-## Customize configuration
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/gpetiot/globe-js.git
+   cd globe-js
+   ```
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Project Setup
+### Running the Application
 
-```sh
-npm install
-```
+To start the development server:
 
-### Compile and Hot-Reload for Development
-
-```sh
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+The application will open in your browser at `http://localhost:5173` (default Vite port).
 
-```sh
+### Building for Production
+
+To create a production build:
+
+```bash
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+The build files will be generated in the `dist/` directory.
 
-```sh
-npm run lint
-```
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run lint/type checks to ensure everything works
+5. Submit a pull request
